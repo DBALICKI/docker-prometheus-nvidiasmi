@@ -14,15 +14,12 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-const LISTEN_ADDRESS = ":9202"
-const NVIDIA_SMI_PATH = "nvidia-smi"
-
 var testMode string
 
 var CLI struct {
 	WebListenAddress string `optional:"" name:"web.listen_address" help:"Address to listen on for web interface and telemetry." default::9202`
 	WebTelemetryPath string `optional:"" name:"web.telemetry-path" help:"Path under which to expose metrics." default:/metrics`
-	NvidiaSmiCommand string `optional:"" name:"nvidia-smi-command" help:"Path or command to be used for the nvidia-smi executable." type:"path" default:nvidia-smi`
+	NvidiaSmiCommand string `optional:"" name:"nvidia-smi-command" help:"Path or command to be used for the nvidia-smi executable." default:nvidia-smi`
 }
 
 type NvidiaSmiLog struct {
@@ -244,7 +241,7 @@ func metrics(w http.ResponseWriter, r *http.Request) {
 		}
 		cmd = exec.Command("/bin/cat", dir+"/nvidia-smi.sample.xml")
 	} else {
-		cmd = exec.Command(NVIDIA_SMI_PATH, "-q", "-x")
+		cmd = exec.Command(CLI.NvidiaSmiCommand, "-q", "-x")
 	}
 
 	// Execute system command
