@@ -86,17 +86,6 @@ type NvidiaSmiLog struct {
 		} `xml:"pci"`
 		FanSpeed         string `xml:"fan_speed"`
 		PerformanceState string `xml:"performance_state"`
-		// <clocks_throttle_reasons>
-		// 	    <clocks_throttle_reason_gpu_idle>Not Active</clocks_throttle_reason_gpu_idle>
-		// 	    <clocks_throttle_reason_applications_clocks_setting>Not Active</clocks_throttle_reason_applications_clocks_setting>
-		// 	    <clocks_throttle_reason_sw_power_cap>Not Active</clocks_throttle_reason_sw_power_cap>
-		// 	    <clocks_throttle_reason_hw_slowdown>Not Active</clocks_throttle_reason_hw_slowdown>
-		// 	    <clocks_throttle_reason_hw_thermal_slowdown>N/A</clocks_throttle_reason_hw_thermal_slowdown>
-		// 	    <clocks_throttle_reason_hw_power_brake_slowdown>N/A</clocks_throttle_reason_hw_power_brake_slowdown>
-		// 	    <clocks_throttle_reason_sync_boost>Not Active</clocks_throttle_reason_sync_boost>
-		// 	    <clocks_throttle_reason_sw_thermal_slowdown>Not Active</clocks_throttle_reason_sw_thermal_slowdown>
-		// 	    <clocks_throttle_reason_display_clocks_setting>Not Active</clocks_throttle_reason_display_clocks_setting>
-		// </clocks_throttle_reasons>
 		FbMemoryUsage struct {
 			Total string `xml:"total"`
 			Used  string `xml:"used"`
@@ -124,68 +113,6 @@ type NvidiaSmiLog struct {
 			AverageFPS     string `xml:"average_fps"`
 			AverageLatency string `xml:"average_latency"`
 		} `xml:"fbc_stats"`
-		// <ecc_mode>
-		//     <current_ecc>N/A</current_ecc>
-		//     <pending_ecc>N/A</pending_ecc>
-		// </ecc_mode>
-		// <ecc_errors>
-		//     <volatile>
-		//         <single_bit>
-		//             <device_memory>N/A</device_memory>
-		//             <register_file>N/A</register_file>
-		//             <l1_cache>N/A</l1_cache>
-		//             <l2_cache>N/A</l2_cache>
-		//             <texture_memory>N/A</texture_memory>
-		//             <texture_shm>N/A</texture_shm>
-		//             <cbu>N/A</cbu>
-		//             <total>N/A</total>
-		//         </single_bit>
-		//         <double_bit>
-		//             <device_memory>N/A</device_memory>
-		//             <register_file>N/A</register_file>
-		//             <l1_cache>N/A</l1_cache>
-		//             <l2_cache>N/A</l2_cache>
-		//             <texture_memory>N/A</texture_memory>
-		//             <texture_shm>N/A</texture_shm>
-		//             <cbu>N/A</cbu>
-		//             <total>N/A</total>
-		//         </double_bit>
-		//     </volatile>
-		//     <aggregate>
-		//         <single_bit>
-		//             <device_memory>N/A</device_memory>
-		//             <register_file>N/A</register_file>
-		//             <l1_cache>N/A</l1_cache>
-		//             <l2_cache>N/A</l2_cache>
-		//             <texture_memory>N/A</texture_memory>
-		//             <texture_shm>N/A</texture_shm>
-		//             <cbu>N/A</cbu>
-		//             <total>N/A</total>
-		//         </single_bit>
-		//         <double_bit>
-		//             <device_memory>N/A</device_memory>
-		//             <register_file>N/A</register_file>
-		//             <l1_cache>N/A</l1_cache>
-		//             <l2_cache>N/A</l2_cache>
-		//             <texture_memory>N/A</texture_memory>
-		//             <texture_shm>N/A</texture_shm>
-		//             <cbu>N/A</cbu>
-		//             <total>N/A</total>
-		//         </double_bit>
-		//     </aggregate>
-		// </ecc_errors>
-		// <retired_pages>
-		//     <multiple_single_bit_retirement>
-		//         <retired_count>N/A</retired_count>
-		//         <retired_pagelist>N/A</retired_pagelist>
-		//     </multiple_single_bit_retirement>
-		//     <double_bit_retirement>
-		//         <retired_count>N/A</retired_count>
-		//         <retired_pagelist>N/A</retired_pagelist>
-		//     </double_bit_retirement>
-		//     <pending_blacklist>N/A</pending_blacklist>
-		//     <pending_retirement>N/A</pending_retirement>
-		// </retired_pages>
 		Temperature struct {
 			GPUTemp                string `xml:"gpu_temp"`
 			GPUTempMaxThreshold    string `xml:"gpu_temp_max_threshold"`
@@ -209,32 +136,16 @@ type NvidiaSmiLog struct {
 			MemClock      string `xml:"mem_clock"`
 			VideoClock    string `xml:"video_clock"`
 		} `xml:"clocks"`
-		// <applications_clocks>
-		// 	<graphics_clock>1190 MHz</graphics_clock>
-		// 	<mem_clock>3505 MHz</mem_clock>
-		// </applications_clocks>
-		// <default_applications_clocks>
-		// 	<graphics_clock>1190 MHz</graphics_clock>
-		// 	<mem_clock>3505 MHz</mem_clock>
-		// </default_applications_clocks>
 		MaxClocks struct {
 			GraphicsClock string `xml:"graphics_clock"`
 			SmClock       string `xml:"sm_clock"`
 			MemClock      string `xml:"mem_clock"`
 			VideoClock    string `xml:"video_clock"`
 		} `xml:"max_clocks"`
-		// <max_customer_boost_clocks>
-		// 	<graphics_clock>N/A</graphics_clock>
-		// </max_customer_boost_clocks>
 		ClockPolicy struct {
 			AutoBoost        string `xml:"auto_boost"`
 			AutoBoostDefault string `xml:"auto_boost_default"`
 		} `xml:"clock_policy"`
-		// <supported_clocks>
-		//     <supported_mem_clock>
-		//         [...]
-		//     </supported_mem_clock>
-		// </supported_clocks>
 		Processes struct {
 			ProcessInfo []struct {
 				Pid         string `xml:"pid"`
@@ -243,8 +154,6 @@ type NvidiaSmiLog struct {
 				UsedMemory  string `xml:"used_memory"`
 			} `xml:"process_info"`
 		} `xml:"processes"`
-		// <accounted_processes>
-		// </accounted_processes>
 	} `xml:"gpu"`
 }
 
