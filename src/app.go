@@ -22,6 +22,11 @@ var CLI struct {
 	NvidiaSmiCommand string `optional:"" name:"nvidia-smi-command" help:"Path or command to be used for the nvidia-smi executable." default:nvidia-smi`
 }
 
+var (
+	ErrorLogger *log.Logger
+	InfoLogger  *log.Logger
+)
+
 type NvidiaSmiLog struct {
 	DriverVersion string `xml:"driver_version"`
 	CudaVersion   string `xml:"cuda_version"`
@@ -231,7 +236,7 @@ func filterNumber(value string) string {
 }
 
 func metrics(w http.ResponseWriter, r *http.Request) {
-	log.Print("Serving /metrics")
+	InfoLogger.Print("Serving /metrics")
 
 	var cmd *exec.Cmd
 	if testMode == "1" {
@@ -247,7 +252,7 @@ func metrics(w http.ResponseWriter, r *http.Request) {
 	// Execute system command
 	stdout, err := cmd.Output()
 	if err != nil {
-		println(err.Error())
+		ErrorLogger.Print(err.Error())
 		if testMode != "1" {
 			println("Something went wrong with the execution of nvidia-smi")
 		}
@@ -320,7 +325,7 @@ func metrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	log.Print("Serving /index")
+	InfoLogger.Print("Serving /index")
 	html := `<!doctype html>
 <html>
     <head>
@@ -336,12 +341,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.SetFlags(log.Flags() | log.Lmicroseconds | log.Lshortfile | log.Lmsgprefix)
+	InfoLogger = log.New(os.Stdout, "- INFO - ", log.Flags())
+	ErrorLogger = log.New(os.Stdout, "- ERROR - ", log.Flags())
+
 	kong.Parse(&CLI)
+
 	testMode = os.Getenv("TEST_MODE")
 	if testMode == "1" {
-		log.Print("Test mode is enabled")
+		InfoLogger.Print("Test mode is enabled")
 	}
-	log.Print("Nvidia SMI exporter listening on " + CLI.WebListenAddress)
+	InfoLogger.Print("Nvidia SMI exporter listening on " + CLI.WebListenAddress)
 	http.HandleFunc("/", index)
 	http.HandleFunc(CLI.WebTelemetryPath, metrics)
 	http.ListenAndServe(CLI.WebListenAddress, nil)
