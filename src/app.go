@@ -13,7 +13,7 @@ import (
 )
 
 const LISTEN_ADDRESS = ":9202"
-const NVIDIA_SMI_PATH = "/usr/bin/nvidia-smi"
+const NVIDIA_SMI_PATH = "nvidia-smi"
 
 var testMode string
 
