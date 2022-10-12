@@ -235,35 +235,13 @@ func filterNumber(value string) string {
 	return r.ReplaceAllString(value, "")
 }
 
-func metrics(w http.ResponseWriter, r *http.Request) {
-	InfoLogger.Print("Serving /metrics")
-
-	var cmd *exec.Cmd
-	if testMode == "1" {
-		dir, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
-		cmd = exec.Command("/bin/cat", dir+"/nvidia-smi.sample.xml")
-	} else {
-		cmd = exec.Command(CLI.NvidiaSmiCommand, "-q", "-x")
-	}
-
-	// Execute system command
-	stdout, err := cmd.Output()
-	if err != nil {
-		ErrorLogger.Print(err.Error())
-		if testMode != "1" {
-			println("Something went wrong with the execution of nvidia-smi")
-		}
-		return
-	}
-
-	// Parse XML
+func parseNvidiaSMIOutput(output []byte) NvidiaSmiLog {
 	var xmlData NvidiaSmiLog
-	xml.Unmarshal(stdout, &xmlData)
+	xml.Unmarshal(output, &xmlData)
+	return xmlData
+}
 
-	// Output
+func generateMetricsResponse(w http.ResponseWriter, xmlData NvidiaSmiLog) {
 	for _, GPU := range xmlData.GPU {
 		id_info := "id=\""+GPU.Id+"\",uuid=\""+GPU.UUID+"\",name=\""+GPU.ProductName+"\""
 		io.WriteString(w, formatVersion("nvidia_smi_driver_version", id_info, xmlData.DriverVersion))
@@ -322,6 +300,27 @@ func metrics(w http.ResponseWriter, r *http.Request) {
 			io.WriteString(w, formatValue("nvidia_smi_process_used_memory_bytes", id_info+",process_pid=\""+Process.Pid+"\",process_type=\""+Process.Type+"\"", filterUnit(Process.UsedMemory)))
 		}
 	}
+	return
+}
+
+func metrics(w http.ResponseWriter, r *http.Request) {
+	InfoLogger.Print("Serving /metrics")
+
+	var cmd *exec.Cmd
+	cmd = exec.Command(CLI.NvidiaSmiCommand, "-q", "-x")
+
+	// Execute nvidia smi command
+	stdout, err := cmd.Output()
+	if err != nil {
+		ErrorLogger.Print("Failed to run nvidia-smi command " + err.Error())
+		return
+	}
+
+	// Parse XML
+	xmlData := parseNvidiaSMIOutput(stdout)
+
+	// Write output
+	generateMetricsResponse(w, xmlData)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
