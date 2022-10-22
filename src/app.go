@@ -14,8 +14,6 @@ import (
 	"github.com/alecthomas/kong"
 )
 
-var testMode string
-
 var CLI struct {
 	WebListenAddress string `optional:"" name:"web.listen_address" help:"Address to listen on for web interface and telemetry." default::9202`
 	WebTelemetryPath string `optional:"" name:"web.telemetry-path" help:"Path under which to expose metrics." default:/metrics`
@@ -346,12 +344,11 @@ func main() {
 
 	kong.Parse(&CLI)
 
-	testMode = os.Getenv("TEST_MODE")
-	if testMode == "1" {
-		InfoLogger.Print("Test mode is enabled")
-	}
 	InfoLogger.Print("Nvidia SMI exporter listening on " + CLI.WebListenAddress)
 	http.HandleFunc("/", index)
 	http.HandleFunc(CLI.WebTelemetryPath, metrics)
-	http.ListenAndServe(CLI.WebListenAddress, nil)
+	err := http.ListenAndServe(CLI.WebListenAddress, nil)
+	if err != nil {
+        ErrorLogger.Print(err)
+    }
 }
