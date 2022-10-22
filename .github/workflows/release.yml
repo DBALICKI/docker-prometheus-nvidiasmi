@@ -20,30 +20,12 @@ jobs:
       run: go build -v -o bin/prometheus-nvidia-smi src/app.go
     - name: Test
       run: go test -v ./...
-    - name: Create Release Asset
-      run: |
-        mkdir release
-        cp bin/prometheus-nvidia-smi release/prometheus-nvidia-smi
-        cp README.md release/README.md
-        cp LICENSE release/LICENSE
-        tar -cvzf prometheus-nvidia-smi.tar.gz release
-    # - name: Create Release
-    #   id: create_release
-    #   uses: actions/create-release@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     tag_name: ${{ github.ref }}
-    #     release_name: Release ${{ github.ref }}
-    #     draft: false
-    #     prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: wangyoucao577/go-release-action@v1.32
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: prometheus-nvidia-smi.tar.gz
-        asset_name: prometheus-nvidia-smi.tar.gz
-        asset_content_type: application/gzip
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: linux
+        goarch: amd64
+        goversion: 1.18
+        project_path: "./bin/prometheus-nvidia-smi"
+        binary_name: "prometheus-nvidia-smi"
+        extra_files: LICENSE README.md
