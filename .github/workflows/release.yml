@@ -1,6 +1,6 @@
 # .github/workflows/release.yaml
 
-name: Go Release
+name: Release
 
 on:
   release:
