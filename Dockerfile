@@ -8,10 +8,9 @@ RUN apt-get update && \
 
 WORKDIR /go
 
-COPY src/app.go app.go
-
-RUN go build -v -o bin/app app.go
+RUN go mod download
+RUN go build -v -o bin/prometheus-nvidia-smi src/app.go
 
 EXPOSE 9202
 
-CMD [ "./bin/app" ]
+CMD [ "./bin/prometheus-nvidia-smi" ]
